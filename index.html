@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>话术助手</title>
+  <style>
+    body { font-family: Arial; display: flex; padding: 40px; }
+    textarea { width: 400px; height: 200px; }
+    .output { margin-left: 40px; }
+    .card { background: #f5e6c8; padding: 20px; margin-bottom: 20px; border-radius: 10px; }
+    button { margin-top: 10px; }
+  </style>
+</head>
+
+<body>
+
+<div>
+  <h2>输入用户话</h2>
+  <textarea id="input"></textarea><br>
+  <button onclick="send()">生成话术</button>
+</div>
+
+<div class="output">
+  <div class="card">
+    <b>话术1（推荐）</b>
+    <p id="r1"></p>
+    <button onclick="copy('r1')">复制</button>
+  </div>
+
+  <div class="card">
+    <b>话术2</b>
+    <p id="r2"></p>
+    <button onclick="copy('r2')">复制</button>
+  </div>
+
+  <div class="card">
+    <b>话术3</b>
+    <p id="r3"></p>
+    <button onclick="copy('r3')">复制</button>
+  </div>
+</div>
+
+<script>
+async function send() {
+  const input = document.getElementById("input").value;
+
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({message: input})
+  });
+
+  const data = await res.json();
+
+  const parts = data.reply.split("\n\n");
+
+  document.getElementById("r1").innerText = parts[0] || "";
+  document.getElementById("r2").innerText = parts[1] || "";
+  document.getElementById("r3").innerText = parts[2] || "";
+}
+
+function copy(id) {
+  navigator.clipboard.writeText(document.getElementById(id).innerText);
+}
+</script>
+
+</body>
+</html>
