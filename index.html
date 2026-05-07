@@ -1,68 +1,153 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>话术助手</title>
+  <title>人人都可以是销冠</title>
+
   <style>
-    body { font-family: Arial; display: flex; padding: 40px; }
-    textarea { width: 400px; height: 200px; }
-    .output { margin-left: 40px; }
-    .card { background: #f5e6c8; padding: 20px; margin-bottom: 20px; border-radius: 10px; }
-    button { margin-top: 10px; }
+    body {
+      font-family: Arial;
+      display: flex;
+      padding: 40px;
+      background: #f5f5f5;
+    }
+
+    textarea {
+      width: 420px;
+      height: 260px;
+      padding: 15px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: 2px solid #6c8cff;
+    }
+
+    .left {
+      width: 45%;
+    }
+
+    .right {
+      width: 55%;
+      margin-left: 40px;
+    }
+
+    .card {
+      background: #f5e6c8;
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      border: 2px solid #6c8cff;
+    }
+
+    button {
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      background: #8ed1c2;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    .copy-btn {
+      background: #ffb6c1;
+      margin-top: 10px;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+    }
+
   </style>
 </head>
 
 <body>
 
-<div>
-  <h2>输入用户对话</h2>
-  <textarea id="input"></textarea><br>
-  <button onclick="send()">生成话术</button>
+<div class="left">
+  <h1>人人都可以是销冠</h1>
+
+  <textarea
+    id="userInput"
+    placeholder="输入用户发送的话..."
+  ></textarea>
+
+  <br>
+
+  <button onclick="getReply()">
+    生成话术
+  </button>
 </div>
 
-<div class="output">
+<div class="right">
+
   <div class="card">
-    <b>话术1（推荐）</b>
-    <p id="r1"></p>
-    <button onclick="copy('r1')">复制</button>
+    <h3>话术1（推荐）</h3>
+    <p id="reply1"></p>
+    <button class="copy-btn" onclick="copyText('reply1')">
+      复制
+    </button>
   </div>
 
   <div class="card">
-    <b>话术2</b>
-    <p id="r2"></p>
-    <button onclick="copy('r2')">复制</button>
+    <h3>话术2</h3>
+    <p id="reply2"></p>
+    <button class="copy-btn" onclick="copyText('reply2')">
+      复制
+    </button>
   </div>
 
   <div class="card">
-    <b>话术3</b>
-    <p id="r3"></p>
-    <button onclick="copy('r3')">复制</button>
+    <h3>话术3</h3>
+    <p id="reply3"></p>
+    <button class="copy-btn" onclick="copyText('reply3')">
+      复制
+    </button>
   </div>
+
 </div>
 
 <script>
-async function send() {
-  const input = document.getElementById("input").value;
 
-  const res = await fetch("/api/chat", {
+async function getReply() {
+
+  const userInput =
+    document.getElementById("userInput").value;
+
+  const response = await fetch("/api/chat", {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({message: input})
+
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify({
+      message: userInput
+    })
   });
 
-  const data = await res.json();
+  const data = await response.json();
 
-  const parts = data.reply.split("\n\n");
+  const replies = data.reply.split("###");
 
-  document.getElementById("r1").innerText = parts[0] || "";
-  document.getElementById("r2").innerText = parts[1] || "";
-  document.getElementById("r3").innerText = parts[2] || "";
+  document.getElementById("reply1").innerText =
+    replies[0] || "";
+
+  document.getElementById("reply2").innerText =
+    replies[1] || "";
+
+  document.getElementById("reply3").innerText =
+    replies[2] || "";
 }
 
-function copy(id) {
-  navigator.clipboard.writeText(document.getElementById(id).innerText);
+function copyText(id) {
+
+  const text =
+    document.getElementById(id).innerText;
+
+  navigator.clipboard.writeText(text);
+
+  alert("已复制");
 }
+
 </script>
 
 </body>
 </html>
- 
